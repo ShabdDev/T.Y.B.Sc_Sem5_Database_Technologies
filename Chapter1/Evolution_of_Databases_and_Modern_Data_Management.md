@@ -181,4 +181,42 @@
     - Traditional RDBMS instances cannot easily partition, replicate, and re-balance data dynamically without manual intervention and downtime.      
 
 ------------------
-
+```
+  1.3 Structured vs Semi-Structured vs Unstructured Data
+  In modern data management, data is broadly classified into three categories based on its organizational structure and format.
+  
+  1. Structured Data
+  Definition: Data that conforms to a fixed, predefined schema (Schema-on-Write).
+  
+  Format: Organized strictly in two-dimensional tables consisting of rows and columns.
+  
+  Querying & Access: Highly organized and easily queried using standard Structured Query Language (SQL).
+  
+  Storage Systems: Relational Database Management Systems (RDBMS) like MySQL, PostgreSQL, Oracle, and MS SQL Server.
+  
+  Examples: Bank transaction logs, student marksheets, inventory catalogs, CSV files, and Excel spreadsheets.
+  
+  2. Semi-Structured Data
+  Definition: Data that does not follow a rigid table structure but contains tags, markers, or key-value pairs (self-describing structure).
+  
+  Format: Hierarchical or graph-based data formats that allow field flexibility per record.
+  
+  Querying & Access: Processed using dedicated parsers, execution engines, or NoSQL query languages.
+  
+  Storage Systems: Document Databases (MongoDB), Key-Value Stores (Redis), and Native XML Databases.
+  
+  Examples: JSON documents, XML files, YAML files, and system log files.
+  
+  3. Unstructured Data
+  Definition: Data that completely lacks a predefined data model, schema, or structural framework.
+  
+  Format: Qualitative media files, documents, and continuous binary streams; accounts for 80% to 90% of all enterprise Big Data.
+  
+  Querying & Access: Cannot be queried using SQL; requires advanced analytics, Machine Learning (ML), Natural Language Processing (NLP), and search indexing engine pipelines.
+  
+  Storage Systems: Data Lakes, Cloud Object Storage (Amazon S3, Azure Blob Storage), and Distributed File Systems (HDFS).
+  
+  Examples: MP4 video files, JPEG/PNG images, PDF documents, social media feeds, audio files, and email bodies.
+```
+----------
+ 
