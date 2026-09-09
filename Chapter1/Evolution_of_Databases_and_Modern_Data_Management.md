@@ -137,65 +137,48 @@
      - १. Normalization आणि Joins चे महत्त्व (Relational Algebra)
      - डेटाचे तुकडे करणे: RDBMS मध्ये डेटाची पुनरावृत्ती (Redundancy) टाळण्यासाठी डेटा Normalized केला जातो,
      - म्हणजेच वेगवेगळ्या टेबल्समध्ये विभागला जातो (उदा. Users टेबल वेगळे, Orders टेबल वेगळे, Payments टेबल वेगळे).
-      
      - JOIN ची गरज: जेव्हा आपल्याला संपूर्ण माहिती हवी असते (उदा. कोणत्या युजरने काय खरेदी केले?), तेव्हा या सर्व टेबल्सवर JOIN ऑपरेशन चालवावे लागते.
-      
      - २. Distributed Architecture मध्ये काय घडते? (Data Shuffling)
      - वेगवेगळ्या कॉम्प्युटर्सवर डेटा: Big Data किंवा Cloud मध्ये डेटा इतका मोठा असतो (Terabytes/Petabytes) की तो एकाच कॉम्प्युटरवर बसत नाही. तो शेकडो सर्व्हर्समध्ये (Nodes) विभागून साठवला जातो.
-      
      - Network Data Shuffling: समजा, Users चा डेटा Node A वर आहे आणि Orders चा डेटा Node B वर आहे.
      - जेव्हा आपण JOIN क्वेरी रन करतो, तेव्हा Node A आणि Node B ला नेटवर्कवरून एकमेकांना डेटा पाठवावा लागतो. यालाच Data Shuffling म्हणतात.
-      
      - ३. Performance Drop आणि High Latency (मंद गती)
      - नेटवर्कचा अडथळा: RAM किंवा Hard Disk मधून डेटा वाचण्यापेक्षा नेटवर्कवरून (Cable/Wi-Fi) डेटा एका सर्व्हरकडून दुसऱ्या सर्व्हरकडे ट्रान्सफर होण्यासाठी खूप जास्त वेळ लागतो.
-      
      - परिणाम: जेव्हा डेटा पेटाबाईट्समध्ये (PB) असतो आणि नेटवर्कवर लाखो रेकॉर्ड्सची देवाणघेवाण सुरू होते, तेव्हा:
-      
      - क्वेरीचा रिस्पॉन्स मिळायला सेकंदांऐवजी मिनिटे किंवा तास लागतात (High Latency).
-      
-     - संपूर्ण सिस्टीमचा स्पीड अत्यंत मंद होतो (Performance Drop).
-      
+     - संपूर्ण सिस्टीमचा स्पीड अत्यंत मद होतो (Performance Drop).
      - सोपे वास्तववादी उदाहरण (Real-World Analogy)
      - RDBMS प्रकार: तुमच्याकडे एकाच खोलीत ३ फायली (Tables) ठेवल्या आहेत. तुम्हाला माहिती गोळा करायला ५ सेकंद लागतात.
-      
      - Big Data (Distributed Joins) प्रकार: १ फाइल पुण्यात आहे, २ री मुंबईत आहे आणि ३ री नागपूरला आहे.
      - JOIN करून उत्तर बनवण्यासाठी तिन्ही शहरांतून माणसे प्रवास करून एका जागी भेटतील आणि डेटा गोळा करतील. या प्रवासात जाणारा वेळ म्हणजेच High Latency!
 
      -  ```
         Normalization (नॉर्मलायझेशन) म्हणजे काय?
-
         Normalization ही डेटाबेस डिझाइन करण्याची अशी एक पद्धत (Technique) आहे, ज्याद्वारे टेबल्समधील Data Redundancy (डेटाची अनावश्यक पुनरावृत्ती) कमी केली जाते आणि Data Integrity (डेटाची अचूकता) टिकवून ठेवली जाते.
-        
         सोप्या भाषेत सांगायचे तर: एकाच मोठ्या आणि विस्कळीत टेबलचे छोटे-छोटे, अर्थपूर्ण टेबल्स बनवणे आणि त्यांना Primary Key - Foreign Key ने जोडणे म्हणजेच Normalization.
+        - Normalization का केले जाते? (Problems Avoided)
+        - जर एकाच टेबलमध्ये सर्व डेटा भरला, तर ३ मुख्य अडचणी (Anomalies) येतात:
+        - Insertion Anomaly: नवीन माहिती भरायची असल्यास नको असलेली माहितीही सक्तीने भरावी लागते.
+        - Deletion Anomaly: एक रेकॉर्ड डिलीट केला की त्यासोबत दुसरी महत्त्वाची माहितीही आपोआप डिलीट होते.
+        - Update Anomaly: एकच नाव किंवा पत्ता अनेक ठिकाणी असेल, तर तो अपडेट करताना सर्व ठिकाणी बदलावा लागतो. एका जागी बदलायचा राहिला तर डेटा चुकीचा होतो.
         
-        Normalization का केले जाते? (Problems Avoided)
-        जर एकाच टेबलमध्ये सर्व डेटा भरला, तर ३ मुख्य अडचणी (Anomalies) येतात:
+        - Normalization कसे काम करते? (Steps / Normal Forms)
+        - डेटा नॉर्मलाइज करण्यासाठी त्याला टप्प्याटप्प्याने नियम लावले जातात, ज्यांना Normal Forms (NF) म्हणतात.
         
-        Insertion Anomaly: नवीन माहिती भरायची असल्यास नको असलेली माहितीही सक्तीने भरावी लागते.
-        
-        Deletion Anomaly: एक रेकॉर्ड डिलीट केला की त्यासोबत दुसरी महत्त्वाची माहितीही आपोआप डिलीट होते.
-        
-        Update Anomaly: एकच नाव किंवा पत्ता अनेक ठिकाणी असेल, तर तो अपडेट करताना सर्व ठिकाणी बदलावा लागतो. एका जागी बदलायचा राहिला तर डेटा चुकीचा होतो.
-        
-        Normalization कसे काम करते? (Steps / Normal Forms)
-        डेटा नॉर्मलाइज करण्यासाठी त्याला टप्प्याटप्प्याने नियम लावले जातात, ज्यांना Normal Forms (NF) म्हणतात.
-        
-        1. First Normal Form (1NF) – Atomic Values (तुकडे करणे)
-        नियम: टेबलच्या कोणत्याही कॉलममध्ये एकापेक्षा जास्त व्हॅल्यूज (Multiple Values / Sets) नसाव्यात. प्रत्येक सेलमध्ये फक्त एकच (Atomic) व्हॅल्यू असावी.
-        
-        कसे काम करते? कॉमा (,) देऊन लिहिलेले फोन नंबर किंवा सब्जेक्ट्स वेगळ्या रो (Rows) मध्ये किंवा वेगळ्या टेबलमध्ये विभागले जातात.
-        
-        2. Second Normal Form (2NF) – Remove Partial Dependency
-        नियम: टेबल आधी 1NF मध्ये असावे, आणि नॉन-प्रायमरी की (Non-Key) कॉलम्स हे पूर्ण Primary Key वर अवलंबून असावेत (Partial Dependency नसावी).
-        
-        कसे काम करते? जर एखादा कॉलम Primary Key च्या फक्त अर्ध्या भागावर अवलंबून असेल, तर तो कॉलम कापून एक नवीन टेबल बनवले जाते.
-        
-        3. Third Normal Form (3NF) – Remove Transitive Dependency
-        नियम: टेबल आधी 2NF मध्ये असावे, आणि नॉन-प्रायमरी की कॉलम हा दुसऱ्या नॉन-प्रायमरी की कॉलमवर अवलंबून नसावा (A -> B आणि B -> C असेल तर A -> C ही थेट अवलंबून राहणे काढून टाकणे).
-   
+        - 1. First Normal Form (1NF) – Atomic Values (तुकडे करणे)
+        - नियम: टेबलच्या कोणत्याही कॉलममध्ये एकापेक्षा जास्त व्हॅल्यूज (Multiple Values / Sets) नसाव्यात. प्रत्येक सेलमध्ये फक्त एकच (Atomic) व्हॅल्यू असावी.
+        - कसे काम करते? कॉमा (,) देऊन लिहिलेले फोन नंबर किंवा सब्जेक्ट्स वेगळ्या रो (Rows) मध्ये किंवा वेगळ्या टेबलमध्ये विभागले जातात.
+        - 2. Second Normal Form (2NF) – Remove Partial Dependency
+        - नियम: टेबल आधी 1NF मध्ये असावे, आणि नॉन-प्रायमरी की (Non-Key) कॉलम्स हे पूर्ण Primary Key वर अवलंबून असावेत (Partial Dependency नसावी).
+        - कसे काम करते? जर एखादा कॉलम Primary Key च्या फक्त अर्ध्या भागावर अवलंबून असेल, तर तो कॉलम कापून एक नवीन टेबल बनवले जाते.
+        - 3. Third Normal Form (3NF) – Remove Transitive Dependency
+        - नियम: टेबल आधी 2NF मध्ये असावे, आणि नॉन-प्रायमरी की कॉलम हा दुसऱ्या नॉन-प्रायमरी की कॉलमवर अवलंबून नसावा (A -> B आणि B -> C असेल तर A -> C ही थेट अवलंबून राहणे काढून टाकणे).
         ```
  5. Cost and Deployment Complexity in Cloud Infrastructure
     - Licensing & Infrastructure Costs: Enterprise RDBMS systems often carry high licensing costs and
     - require expensive high-end storage infrastructure (SAN/NAS).
     - Cloud Elasticity Challenges: Cloud-native applications require dynamic, rapid auto-scaling (scaling up and down on demand).
     - Traditional RDBMS instances cannot easily partition, replicate, and re-balance data dynamically without manual intervention and downtime.      
+
+------------------
+
