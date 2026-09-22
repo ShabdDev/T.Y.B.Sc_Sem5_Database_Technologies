@@ -690,3 +690,971 @@ system:
   ]
 }
 ```
+
+# Set C
+
+```
+SET C — Q1: Social Media MongoDB Data Model
+
+Assignment
+
+Design a complete MongoDB data model for a Social Media application. The model should have at least three collections: Users, Posts, and Comments. Demonstrate embedding for comments within posts and referencing for user profiles. Design JSON documents for each collection with appropriate fields.
+
+1. Database Design
+
+Database name:
+
+SocialMediaDB
+
+Collections:
+
+SocialMediaDB
+├── Users
+├── Posts
+└── Comments
+
+The model demonstrates:
+
+Referencing: Posts and Comments store user_id to refer to a user in the Users collection.
+
+Embedding: Comments are stored inside the comments array of a Post document.
+
+2. Users Collection
+
+Collection name:
+
+Users
+
+JSON Document
+
+{
+  "user_id": "U101",
+  "name": "Anushka Patil",
+  "username": "anushka101",
+  "email": "anushka@example.com",
+  "password": "hashed_password",
+  "profile": {
+    "bio": "Computer Science Student",
+    "city": "Pune"
+  },
+  "created_at": "2026-09-22"
+}
+
+The user_id uniquely identifies the user. Other collections can store user_id instead of storing the complete user profile again. This demonstrates referencing.
+
+3. Posts Collection
+
+Collection name:
+
+Posts
+
+JSON Document
+
+{
+  "post_id": "P101",
+  "user_id": "U101",
+  "content": "Learning MongoDB and MongoDB Compass today!",
+  "post_type": "text",
+  "likes": 25,
+  "created_at": "2026-09-22T09:00:00",
+  "comments": [
+    {
+      "comment_id": "C101",
+      "user_id": "U102",
+      "text": "Great! Keep learning.",
+      "created_at": "2026-09-22T09:10:00"
+    },
+    {
+      "comment_id": "C102",
+      "user_id": "U103",
+      "text": "MongoDB is interesting!",
+      "created_at": "2026-09-22T09:15:00"
+    }
+  ]
+}
+
+The user_id references the user who created the post. The comments array contains comment documents directly inside the Post document, demonstrating embedding.
+
+4. Comments Collection
+
+Collection name:
+
+Comments
+
+JSON Document 1
+
+{
+  "comment_id": "C101",
+  "post_id": "P101",
+  "user_id": "U102",
+  "text": "Great! Keep learning.",
+  "likes": 3,
+  "created_at": "2026-09-22T09:10:00"
+}
+
+JSON Document 2
+
+{
+  "comment_id": "C102",
+  "post_id": "P101",
+  "user_id": "U103",
+  "text": "MongoDB is interesting!",
+  "likes": 5,
+  "created_at": "2026-09-22T09:15:00"
+}
+
+post_id identifies the post to which the comment belongs, and user_id identifies the user who created the comment.
+
+5. Embedding Demonstration
+
+Comments are embedded inside the Post document:
+
+{
+  "post_id": "P101",
+  "user_id": "U101",
+  "content": "Learning MongoDB!",
+  "comments": [
+    {
+      "comment_id": "C101",
+      "user_id": "U102",
+      "text": "Great! Keep learning."
+    },
+    {
+      "comment_id": "C102",
+      "user_id": "U103",
+      "text": "MongoDB is interesting!"
+    }
+  ]
+}
+
+Structure:
+
+Post P101
+│
+├── post_id
+├── user_id
+├── content
+├── likes
+└── comments[]
+      ├── Comment C101
+      └── Comment C102
+
+This is embedding because the comment information is stored inside the Post document.
+
+6. Referencing Demonstration
+
+The Post stores the user's ID instead of the complete user information:
+
+{
+  "post_id": "P101",
+  "user_id": "U101"
+}
+
+The user_id refers to a document in the Users collection:
+
+{
+  "user_id": "U101",
+  "name": "Anushka Patil",
+  "username": "anushka101"
+}
+
+Therefore:
+
+Posts.user_id → Users.user_id
+Comments.post_id → Posts.post_id
+Comments.user_id → Users.user_id
+
+7. Complete Data Model
+
+SocialMediaDB
+│
+├── Users
+│   ├── U101
+│   ├── U102
+│   └── U103
+│
+├── Posts
+│   └── P101
+│       ├── user_id → U101
+│       └── comments[]
+│           ├── C101 → U102
+│           └── C102 → U103
+│
+└── Comments
+    ├── C101
+    │   ├── post_id → P101
+    │   └── user_id → U102
+    │
+    └── C102
+        ├── post_id → P101
+        └── user_id → U103
+
+8. MongoDB Compass Setup
+
+Connect MongoDB Compass to:
+
+mongodb://localhost:27017
+
+Create database:
+
+SocialMediaDB
+
+Create these three collections:
+
+Users
+Posts
+Comments
+
+Compass should show:
+
+localhost:27017
+└── SocialMediaDB
+    ├── Users
+    ├── Posts
+    └── Comments
+
+9. Insert Users in Compass
+
+Open:
+
+SocialMediaDB → Users
+
+Select Add Data → Insert Document and insert:
+
+{
+  "user_id": "U101",
+  "name": "Anushka Patil",
+  "username": "anushka101",
+  "email": "anushka@example.com",
+  "password": "hashed_password",
+  "profile": {
+    "bio": "Computer Science Student",
+    "city": "Pune"
+  },
+  "created_at": "2026-09-22"
+}
+
+Additional users:
+
+{
+  "user_id": "U102",
+  "name": "Rahul Sharma",
+  "username": "rahul102",
+  "email": "rahul@example.com",
+  "password": "hashed_password",
+  "profile": {
+    "bio": "Technology Enthusiast",
+    "city": "Mumbai"
+  },
+  "created_at": "2026-09-22"
+}
+
+{
+  "user_id": "U103",
+  "name": "Priya Shah",
+  "username": "priya103",
+  "email": "priya@example.com",
+  "password": "hashed_password",
+  "profile": {
+    "bio": "Student",
+    "city": "Pune"
+  },
+  "created_at": "2026-09-22"
+}
+
+10. Insert Post in Compass
+
+Open:
+
+SocialMediaDB → Posts
+
+Select Add Data → Insert Document and insert:
+
+{
+  "post_id": "P101",
+  "user_id": "U101",
+  "content": "Learning MongoDB and MongoDB Compass today!",
+  "post_type": "text",
+  "likes": 25,
+  "created_at": "2026-09-22T09:00:00",
+  "comments": [
+    {
+      "comment_id": "C101",
+      "user_id": "U102",
+      "text": "Great! Keep learning.",
+      "created_at": "2026-09-22T09:10:00"
+    },
+    {
+      "comment_id": "C102",
+      "user_id": "U103",
+      "text": "MongoDB is interesting!",
+      "created_at": "2026-09-22T09:15:00"
+    }
+  ]
+}
+
+11. Insert Comments in Compass
+
+Open:
+
+SocialMediaDB → Comments
+
+Insert:
+
+{
+  "comment_id": "C101",
+  "post_id": "P101",
+  "user_id": "U102",
+  "text": "Great! Keep learning.",
+  "likes": 3,
+  "created_at": "2026-09-22T09:10:00"
+}
+
+Then insert:
+
+{
+  "comment_id": "C102",
+  "post_id": "P101",
+  "user_id": "U103",
+  "text": "MongoDB is interesting!",
+  "likes": 5,
+  "created_at": "2026-09-22T09:15:00"
+}
+
+12. Optional mongosh Implementation
+
+Select the database:
+
+use SocialMediaDB
+
+Create collections:
+
+db.createCollection("Users")
+db.createCollection("Posts")
+db.createCollection("Comments")
+
+Insert a user:
+
+db.Users.insertOne({
+  user_id: "U101",
+  name: "Anushka Patil",
+  username: "anushka101",
+  email: "anushka@example.com",
+  password: "hashed_password",
+  profile: {
+    bio: "Computer Science Student",
+    city: "Pune"
+  },
+  created_at: "2026-09-22"
+})
+
+Insert a post with embedded comments:
+
+db.Posts.insertOne({
+  post_id: "P101",
+  user_id: "U101",
+  content: "Learning MongoDB and MongoDB Compass today!",
+  post_type: "text",
+  likes: 25,
+  created_at: "2026-09-22T09:00:00",
+  comments: [
+    {
+      comment_id: "C101",
+      user_id: "U102",
+      text: "Great! Keep learning.",
+      created_at: "2026-09-22T09:10:00"
+    },
+    {
+      comment_id: "C102",
+      user_id: "U103",
+      text: "MongoDB is interesting!",
+      created_at: "2026-09-22T09:15:00"
+    }
+  ]
+})
+
+Insert comments:
+
+db.Comments.insertMany([
+  {
+    comment_id: "C101",
+    post_id: "P101",
+    user_id: "U102",
+    text: "Great! Keep learning.",
+    likes: 3,
+    created_at: "2026-09-22T09:10:00"
+  },
+  {
+    comment_id: "C102",
+    post_id: "P101",
+    user_id: "U103",
+    text: "MongoDB is interesting!",
+    likes: 5,
+    created_at: "2026-09-22T09:15:00"
+  }
+])
+
+Display the data:
+
+db.Users.find().pretty()
+db.Posts.find().pretty()
+db.Comments.find().pretty()
+
+13. Embedding vs Referencing
+
+Concept                 Implementation                                       Example
+
+Embedding               Comments are stored inside Posts                     Posts.comments[]
+
+Referencing             User ID is stored instead of full profile            Posts.user_id
+
+Referencing             Comment identifies its Post                          Comments.post_id
+
+Referencing             Comment identifies its User                          Comments.user_id
+
+14. Result
+
+A complete MongoDB data model for a Social Media application was designed using three collections: Users, Posts, and Comments.
+
+The Users collection stores user profiles.
+
+The Posts collection stores posts and embeds comments inside each post.
+
+The Comments collection stores comment records separately.
+
+user_id is used to reference users.
+
+post_id is used to reference posts from comments.
+
+The comments array inside Posts demonstrates MongoDB embedding.
+
+Conclusion
+
+The Social Media model successfully demonstrates both embedding and referencing in MongoDB. Embedding keeps comments together with their related post, while referencing avoids repeating complete user profile information in posts and comments.
+```
+
+```
+SET C — Q2: Online Food Delivery System
+
+Case Study
+
+Design a complete JSON-based data representation for an Online Food Delivery System.
+
+The system contains:
+
+Restaurant with embedded menu items
+
+Customer with address
+
+Order referencing restaurant and customer IDs
+
+Order with embedded ordered items
+
+1. Database Design
+
+Database name:
+
+FoodDeliveryDB
+
+Collections:
+
+FoodDeliveryDB
+├── Restaurants
+├── Customers
+└── Orders
+
+Relationships:
+
+Restaurants
+    │
+    │ restaurant_id
+    ↓
+  Orders
+    ↑
+    │ customer_id
+Customers
+
+Inside a Restaurant:
+
+Restaurant
+└── menu_items[]
+      ├── Item 1
+      ├── Item 2
+      ├── Item 3
+      └── Item 4
+
+Inside an Order:
+
+Order
+└── ordered_items[]
+      ├── Item 1
+      ├── Item 2
+      └── Item 3
+
+2. Restaurant Collection
+
+Collection name:
+
+Restaurants
+
+JSON Document
+
+{
+  "restaurant_id": "R101",
+  "restaurant_name": "Spice Garden",
+  "cuisine": ["Indian", "Chinese"],
+  "location": {
+    "city": "Pune",
+    "area": "Kothrud",
+    "pincode": "411038"
+  },
+  "rating": 4.5,
+  "contact": "9876543210",
+  "menu_items": [
+    {
+      "item_id": "I101",
+      "item_name": "Paneer Tikka",
+      "category": "Starter",
+      "price": 250,
+      "is_available": true
+    },
+    {
+      "item_id": "I102",
+      "item_name": "Veg Biryani",
+      "category": "Main Course",
+      "price": 220,
+      "is_available": true
+    },
+    {
+      "item_id": "I103",
+      "item_name": "Butter Naan",
+      "category": "Bread",
+      "price": 60,
+      "is_available": true
+    },
+    {
+      "item_id": "I104",
+      "item_name": "Masala Dosa",
+      "category": "South Indian",
+      "price": 120,
+      "is_available": false
+    }
+  ]
+}
+
+Why Embed Menu Items?
+
+Menu items are embedded inside the Restaurant because they are closely related to that restaurant and are commonly retrieved along with its menu.
+
+Choice: Embedding
+
+3. Customer Collection
+
+Collection name:
+
+Customers
+
+JSON Document
+
+{
+  "customer_id": "C101",
+  "name": "Anushka Patil",
+  "email": "anushka@example.com",
+  "phone": "9876543210",
+  "address": {
+    "house_no": "12",
+    "street": "Karve Road",
+    "area": "Kothrud",
+    "city": "Pune",
+    "state": "Maharashtra",
+    "pincode": "411038"
+  }
+}
+
+Why Embed the Address?
+
+The address is part of the customer's information and is normally retrieved with the customer.
+
+Choice: Embedding
+
+4. Order Collection
+
+Collection name:
+
+Orders
+
+JSON Document
+
+{
+  "order_id": "O101",
+  "customer_id": "C101",
+  "restaurant_id": "R101",
+  "order_date": "2026-09-22T12:30:00",
+  "delivery_address": {
+    "house_no": "12",
+    "street": "Karve Road",
+    "area": "Kothrud",
+    "city": "Pune",
+    "state": "Maharashtra",
+    "pincode": "411038"
+  },
+  "ordered_items": [
+    {
+      "item_id": "I101",
+      "item_name": "Paneer Tikka",
+      "quantity": 2,
+      "price": 250
+    },
+    {
+      "item_id": "I102",
+      "item_name": "Veg Biryani",
+      "quantity": 1,
+      "price": 220
+    },
+    {
+      "item_id": "I103",
+      "item_name": "Butter Naan",
+      "quantity": 2,
+      "price": 60
+    }
+  ],
+  "subtotal": 840,
+  "delivery_fee": 40,
+  "total_amount": 880,
+  "payment_method": "UPI",
+  "payment_status": "Paid",
+  "order_status": "Preparing"
+}
+
+5. Referencing Restaurant and Customer
+
+The Order contains:
+
+{
+  "customer_id": "C101",
+  "restaurant_id": "R101"
+}
+
+These IDs refer to documents in the respective collections.
+
+Orders.customer_id → Customers.customer_id
+Orders.restaurant_id → Restaurants.restaurant_id
+
+Why Use Referencing?
+
+A customer can place many orders:
+
+Customer C101
+    ├── Order O101
+    ├── Order O105
+    └── Order O110
+
+A restaurant can receive many orders:
+
+Restaurant R101
+    ├── Order O101
+    ├── Order O102
+    ├── Order O103
+    └── Order O104
+
+Storing the complete customer or restaurant document inside every order would duplicate data.
+
+Choice: Referencing
+
+6. Why Embed Ordered Items?
+
+Ordered items represent the specific items purchased in a particular order.
+
+{
+  "ordered_items": [
+    {
+      "item_id": "I101",
+      "item_name": "Paneer Tikka",
+      "quantity": 2,
+      "price": 250
+    },
+    {
+      "item_id": "I102",
+      "item_name": "Veg Biryani",
+      "quantity": 1,
+      "price": 220
+    }
+  ]
+}
+
+An order and its ordered items are normally retrieved together.
+
+Choice: Embedding
+
+7. Why Store Item Name and Price in the Order?
+
+Restaurant menu prices can change.
+
+For example:
+
+Current menu:
+Paneer Tikka = ₹250
+
+Later:
+
+Paneer Tikka = ₹300
+
+An old order should still preserve the price paid when the order was placed.
+
+Therefore, the order stores:
+
+{
+  "item_id": "I101",
+  "item_name": "Paneer Tikka",
+  "quantity": 2,
+  "price": 250
+}
+
+This preserves historical order information.
+
+8. Embedding vs Referencing
+
+Relationship                     Choice                                 Reason
+
+Restaurant → Menu Items          Embedding            Menu belongs to restaurant and is commonly retrieved with it
+
+Customer → Address               Embedding            Address is part of customer information
+
+Order → Customer                 Referencing          One customer can have many orders
+
+Order → Restaurant               Referencing          One restaurant can receive many orders
+
+Order → Ordered Items            Embedding            Items belong to a particular order and are retrieved with it
+
+9. Complete Data Model
+
+FoodDeliveryDB
+│
+├── Restaurants
+│     └── R101
+│          ├── restaurant_name
+│          ├── cuisine[]
+│          ├── location
+│          └── menu_items[]
+│                ├── I101
+│                ├── I102
+│                ├── I103
+│                └── I104
+│
+├── Customers
+│     └── C101
+│          ├── name
+│          ├── email
+│          ├── phone
+│          └── address
+│
+└── Orders
+      └── O101
+           ├── customer_id → C101
+           ├── restaurant_id → R101
+           ├── order_date
+           ├── delivery_address
+           └── ordered_items[]
+                 ├── I101
+                 ├── I102
+                 └── I103
+
+10. MongoDB Compass Implementation
+
+Connect MongoDB Compass to:
+
+mongodb://localhost:27017
+
+Create database:
+
+FoodDeliveryDB
+
+Create these collections:
+
+Restaurants
+Customers
+Orders
+
+Compass structure:
+
+localhost:27017
+└── FoodDeliveryDB
+    ├── Restaurants
+    ├── Customers
+    └── Orders
+
+Insert Restaurant
+
+Open:
+
+Restaurants → Add Data → Insert Document
+
+Paste the Restaurant JSON from Section 2.
+
+Insert Customer
+
+Open:
+
+Customers → Add Data → Insert Document
+
+Paste the Customer JSON from Section 3.
+
+Insert Order
+
+Open:
+
+Orders → Add Data → Insert Document
+
+Paste the Order JSON from Section 4.
+
+11. Optional mongosh Implementation
+
+Select the database:
+
+use FoodDeliveryDB
+
+Create collections:
+
+db.createCollection("Restaurants")
+db.createCollection("Customers")
+db.createCollection("Orders")
+
+Insert Restaurant
+
+db.Restaurants.insertOne({
+  restaurant_id: "R101",
+  restaurant_name: "Spice Garden",
+  cuisine: ["Indian", "Chinese"],
+  location: {
+    city: "Pune",
+    area: "Kothrud",
+    pincode: "411038"
+  },
+  rating: 4.5,
+  contact: "9876543210",
+  menu_items: [
+    {
+      item_id: "I101",
+      item_name: "Paneer Tikka",
+      category: "Starter",
+      price: 250,
+      is_available: true
+    },
+    {
+      item_id: "I102",
+      item_name: "Veg Biryani",
+      category: "Main Course",
+      price: 220,
+      is_available: true
+    },
+    {
+      item_id: "I103",
+      item_name: "Butter Naan",
+      category: "Bread",
+      price: 60,
+      is_available: true
+    },
+    {
+      item_id: "I104",
+      item_name: "Masala Dosa",
+      category: "South Indian",
+      price: 120,
+      is_available: false
+    }
+  ]
+})
+
+Insert Customer
+
+db.Customers.insertOne({
+  customer_id: "C101",
+  name: "Anushka Patil",
+  email: "anushka@example.com",
+  phone: "9876543210",
+  address: {
+    house_no: "12",
+    street: "Karve Road",
+    area: "Kothrud",
+    city: "Pune",
+    state: "Maharashtra",
+    pincode: "411038"
+  }
+})
+
+Insert Order
+
+db.Orders.insertOne({
+  order_id: "O101",
+  customer_id: "C101",
+  restaurant_id: "R101",
+  order_date: "2026-09-22T12:30:00",
+  delivery_address: {
+    house_no: "12",
+    street: "Karve Road",
+    area: "Kothrud",
+    city: "Pune",
+    state: "Maharashtra",
+    pincode: "411038"
+  },
+  ordered_items: [
+    {
+      item_id: "I101",
+      item_name: "Paneer Tikka",
+      quantity: 2,
+      price: 250
+    },
+    {
+      item_id: "I102",
+      item_name: "Veg Biryani",
+      quantity: 1,
+      price: 220
+    },
+    {
+      item_id: "I103",
+      item_name: "Butter Naan",
+      quantity: 2,
+      price: 60
+    }
+  ],
+  subtotal: 840,
+  delivery_fee: 40,
+  total_amount: 880,
+  payment_method: "UPI",
+  payment_status: "Paid",
+  order_status: "Preparing"
+})
+
+Check the data:
+
+db.Restaurants.find().pretty()
+db.Customers.find().pretty()
+db.Orders.find().pretty()
+
+12. Result
+
+A complete JSON-based data model for an Online Food Delivery System was designed using three collections:
+
+Restaurants
+
+Customers
+
+Orders
+
+The model demonstrates:
+
+Embedded menu items inside Restaurants.
+
+Embedded address inside Customers.
+
+Referenced customer using customer_id in Orders.
+
+Referenced restaurant using restaurant_id in Orders.
+
+Embedded ordered items inside Orders.
+
+Historical item price preservation inside an Order.
+
+Conclusion
+
+The model uses embedding for closely related data that is normally accessed together and referencing for entities that are shared across many documents. This provides a practical MongoDB design for an online food delivery application.
+```
