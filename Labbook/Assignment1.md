@@ -1658,3 +1658,354 @@ Conclusion
 
 The model uses embedding for closely related data that is normally accessed together and referencing for entities that are shared across many documents. This provides a practical MongoDB design for an online food delivery application.
 ```
+-------
+
+```
+Set C
+Q3. Limitations of JSON and How BSON Overcomes Them in MongoDB
+Question
+
+Research and document the limitations of JSON format and how BSON overcomes those limitations in MongoDB. Provide concrete examples showing where standard JSON would fail and how BSON handles the same scenario correctly.
+
+1. Introduction
+What is JSON?
+
+JSON (JavaScript Object Notation) is a text-based data format commonly used for storing and exchanging data.
+
+Example:
+
+{
+  "name": "Ramesh",
+  "age": 25,
+  "active": true
+}
+
+Standard JSON supports a limited set of data types:
+
+String
+Number
+Boolean
+Object
+Array
+Null
+What is BSON?
+
+BSON (Binary JSON) is the binary-encoded document format used by MongoDB.
+
+BSON provides additional data types that are not available as native types in standard JSON, such as:
+
+ObjectId
+Date
+Binary data
+Int32
+Int64
+Decimal128
+Regular Expression
+Timestamp
+
+Therefore, BSON allows MongoDB to represent data more precisely than standard JSON.
+
+2. Limitations of Standard JSON
+Limitation 1 – JSON does not have a native ObjectId type
+
+MongoDB commonly uses ObjectId for the _id field.
+
+Standard JSON
+
+JSON cannot represent an ObjectId as a native JSON data type.
+
+We would have to store it as a string:
+
+{
+  "_id": "68c123456789abcdef123456"
+}
+
+MongoDB would treat this as a String, not as an ObjectId.
+
+BSON
+
+BSON supports ObjectId directly:
+
+{
+  _id: ObjectId("68c123456789abcdef123456")
+}
+
+Here:
+
+ObjectId(...)
+
+is a BSON type.
+
+Advantage
+
+MongoDB can efficiently use ObjectId for document identifiers and indexes.
+
+3. Limitation 2 – JSON has no native Date/DateTime type
+
+Standard JSON does not have a dedicated Date data type.
+
+For example:
+
+{
+  "createdAt": "2026-09-22T18:30:00Z"
+}
+
+The value is simply a string.
+
+An application must interpret that string as a date.
+
+BSON
+
+BSON provides a native Date type.
+
+In mongosh:
+
+{
+  createdAt: new Date()
+}
+
+Example:
+
+db.users.insertOne({
+  name: "Ramesh",
+  createdAt: new Date()
+})
+
+MongoDB stores the value as a BSON Date rather than an ordinary string.
+
+Checking the type
+db.users.aggregate([
+  {
+    $project: {
+      createdAtType: { $type: "$createdAt" }
+    }
+  }
+])
+
+Output will identify the field as:
+
+date
+Advantage
+
+MongoDB can perform date-related operations such as:
+
+Date comparisons
+Sorting by date
+Date aggregation
+Date range queries
+4. Limitation 3 – JSON has no native Binary Data type
+
+Standard JSON cannot directly represent arbitrary binary data.
+
+For example, suppose we want to store a PDF or image.
+
+We might convert the binary data into Base64:
+
+{
+  "file": "JVBERi0xLjQKJc..."
+}
+
+The problem is that this is now a string containing Base64 data, not a native binary value.
+
+It also increases the size of the data because binary data has been encoded into text.
+
+BSON
+
+BSON supports a dedicated Binary data type.
+
+Conceptually:
+
+{
+  fileData: <BSON Binary Data>
+}
+
+MongoDB can therefore distinguish binary data from normal text.
+
+Advantage
+
+BSON can represent binary data directly, which is useful for applications dealing with:
+
+Files
+Images
+Encryption data
+Binary identifiers
+Other raw binary information
+5. Limitation 4 – JSON does not distinguish different integer sizes
+
+JSON has a general Number type.
+
+For example:
+
+{
+  "age": 25,
+  "population": 10000000000
+}
+
+JSON does not provide separate standard types such as:
+
+Int32
+Int64
+BSON
+
+BSON provides multiple numeric types.
+
+For example:
+
+{
+  age: NumberInt(25),
+  population: NumberLong("10000000000")
+}
+
+Here:
+
+NumberInt(25)
+
+represents a 32-bit integer.
+
+And:
+
+NumberLong("10000000000")
+
+represents a 64-bit integer.
+
+Advantage
+
+MongoDB can preserve the intended numeric representation and range.
+
+6. Limitation 5 – JSON does not have Decimal128
+
+This is particularly important for financial and monetary calculations.
+
+A normal JSON number might look like:
+
+{
+  "price": 999.99
+}
+
+JSON does not have a native Decimal128 data type.
+
+For applications requiring exact decimal precision, such as:
+
+Banking
+Accounting
+Payments
+Financial transactions
+
+a dedicated decimal type is useful.
+
+BSON
+
+MongoDB supports Decimal128.
+
+Example:
+
+{
+  price: Decimal128("999.99")
+}
+
+For example:
+
+db.products.insertOne({
+  name: "Laptop",
+  price: Decimal128("99999.99")
+})
+Advantage
+
+Decimal128 provides high-precision decimal arithmetic and is designed for use cases where exact decimal representation is important.
+
+7. Limitation 6 – JSON does not preserve MongoDB-specific BSON types
+
+Consider this JSON:
+
+{
+  "_id": "68c123456789abcdef123456",
+  "createdAt": "2026-09-22T18:30:00Z",
+  "price": "999.99"
+}
+
+Everything here is represented as strings.
+
+MongoDB cannot know from ordinary JSON alone that:
+
+_id       → ObjectId
+createdAt → Date
+price     → Decimal128
+
+was intended.
+
+BSON can store the actual types:
+
+{
+  _id: ObjectId("68c123456789abcdef123456"),
+  createdAt: new Date(),
+  price: Decimal128("999.99")
+}
+
+Thus, BSON preserves the type information.
+
+Concrete Example – Student Record
+
+Suppose we want to store a student's information.
+
+Standard JSON
+{
+  "studentId": "68c123456789abcdef123456",
+  "name": "Sneha",
+  "age": 21,
+  "fees": "25000.50",
+  "admissionDate": "2026-06-15T10:30:00Z"
+}
+
+Problems:
+
+studentId      → String
+fees           → String
+admissionDate  → String
+age            → generic JSON Number
+
+The application has to interpret these strings and numbers correctly.
+
+BSON representation in MongoDB
+{
+  _id: ObjectId("68c123456789abcdef123456"),
+  name: "Sneha",
+  age: NumberInt(21),
+  fees: Decimal128("25000.50"),
+  admissionDate: new Date("2026-06-15T10:30:00Z")
+}
+
+Now MongoDB has explicit BSON types:
+
+_id            → ObjectId
+age            → Int32
+fees           → Decimal128
+admissionDate  → Date
+
+This preserves the meaning of the data.
+
+8. Practical MongoDB Demonstration
+
+We can demonstrate BSON types using mongosh.
+
+Step 1 – Create database
+use bson_demo
+Step 2 – Insert different BSON types
+db.types.insertOne({
+  name: "Ramesh",
+  age: NumberInt(25),
+  population: NumberLong("10000000000"),
+  price: Decimal128("999.99"),
+  userId: ObjectId(),
+  createdAt: new Date()
+})
+Step 3 – Display the document
+db.types.find()
+
+You can see values such as:
+
+age          → 25
+population   → 10000000000
+price        → 999.99
+userId       → ObjectId(...)
+createdAt    → ISODate(...)
+```
